@@ -10,6 +10,19 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+// Components
+import Header from "./components/Header/header";
+import Footer from "./components/Footer/footer";
+import Copyright from "./components/Copyright/copyright";
+
+// FONTS
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+
+
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -33,7 +46,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <Header />
+        <main>
+          {children}
+        </main>
+        <Footer />
+        <Copyright />
         <ScrollRestoration />
         <Scripts />
       </body>

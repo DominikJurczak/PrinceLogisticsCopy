@@ -1,15 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Roboto", sans-serif;
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@layer components {
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+  /* Paragraph */
+  .content-body p {
+    @apply text-gray-700 leading-7 mb-5 text-sm font-medium;
+  }
+
+  /* H3 inside content */
+  .content-body h3 {
+    @apply text-2xl font-semibold mt-10 mb-4 italic;
+  }
+
+  /* Images inside content */
+  .content-body img {
+    @apply my-8 max-w-full;
+  }
+
+  /* Optional: strong text */
+  .content-body strong {
+    @apply font-semibold;
+  }
+
+  /* Optional: lists */
+  .content-body ul {
+    @apply list-disc pl-6 mb-5;
+  }
+
+  .content-body li {
+    @apply mb-2 text-sm font-medium;
+  }
+
+  .input {
+    @apply border border-gray-300 px-4 py-3 rounded-sm bg-white
+           focus:outline-none focus:ring-2 focus:ring-red-500
+           focus:border-red-500 transition w-full;
+  }
+
+  .form-group {
+    @apply flex flex-col gap-1;
+  }
+
+  .radio-inline {
+    @apply flex flex-wrap gap-6;
+  }
+
+  .radio-group {
+    @apply space-y-3;
+  }
+
+  .separator {
+    @apply border-t border-gray-300;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold mb-4;
+  }
+
+
+  .contact-input {
+    @apply bg-gray-200 px-4 py-3 w-full 
+           text-gray-800 
+           placeholder:text-gray-600
+           placeholder:uppercase
+           focus:outline-none
+           focus:bg-gray-300
+           transition;
+  }
+
+
+  .quote-input {
+    @apply w-full bg-gray-200 px-3 py-2
+    text-sm
+           text-gray-700
+           placeholder:text-gray-400
+           placeholder:uppercase
+           focus:outline-none
+           focus:bg-gray-300
+           transition;
   }
 }
