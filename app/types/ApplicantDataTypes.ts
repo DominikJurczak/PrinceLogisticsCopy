@@ -1,3 +1,5 @@
+import type { EmployerType } from "./EmployerTypes"
+
 export type YesNo = "yes" | "no"
 
 export type PositionType = 'team' | 'solo'
@@ -10,7 +12,7 @@ export type ApplicantDataTypes = {
     firstName: string;
     lastName: string;
     email: string;
-    phone: number;
+    phone: string;
     city: string;
     country: CountryType;
 
@@ -21,11 +23,13 @@ export type ApplicantDataTypes = {
 
     tickets: YesNo;
     demeritPoints?: string;
-    roadAccident?: YesNo;
-    workAccident?: YesNo;
+    roadAccidents?: YesNo;
+    workAccidents?: YesNo;
 
     referralSource?: RefferalSourceType;
     referred?: YesNo;
     referringEmployee?: string;
     comments?: string;
+
+    employmentHistory? : EmployerType[];
 }

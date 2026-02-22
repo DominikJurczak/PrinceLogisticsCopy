@@ -15,6 +15,14 @@ const EmploymentHistory = ({ setEmploymentHistory, employmentHistory }:Employmen
     ])
   }
 
+  const updateField = (index: number, field: keyof EmployerType, value: string) => {
+    setEmploymentHistory((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
   return (
     <div className="w-full p-6 border rounded-xl space-y-6 mt-5">
 
@@ -36,13 +44,16 @@ const EmploymentHistory = ({ setEmploymentHistory, employmentHistory }:Employmen
 
           {/* BODY */}
           <tbody>
-            {employmentHistory.map((_, index) => (
+            {employmentHistory.map((entry, index) => (
               <tr key={index} className="border-b last:border-none">
 
                 <td className="py-2 px-3">
                   <input
                     type="text"
                     className="w-full border border-black rounded-md px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-red-600"
+                    value={entry.employer}
+                    onChange={(e) => updateField(index, 'employer', e.target.value)}
+                  
                   />
                 </td>
 
@@ -50,6 +61,8 @@ const EmploymentHistory = ({ setEmploymentHistory, employmentHistory }:Employmen
                   <input
                     type="date"
                     className="w-full border border-black rounded-md px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-red-600"
+                    value={entry.from}
+                    onChange={(e) => updateField(index, 'from', e.target.value)}
                   />
                 </td>
 
@@ -57,11 +70,23 @@ const EmploymentHistory = ({ setEmploymentHistory, employmentHistory }:Employmen
                   <input
                     type="date"
                     className="w-full border border-black rounded-md px-3 py-2 text-black focus:outline-none focus:ring-2 focus:ring-red-600"
+                    value={entry.to}
+                    onChange={(e) => updateField(index, 'to', e.target.value)}
+                  
                   />
                 </td>
 
               </tr>
             ))}
+
+            {/* checking for entires if theres none show message */}
+            {employmentHistory.length === 0 && (
+              <tr>
+                <td colSpan={3} className="py-6 text-center text-gray-500">
+                  No employment history added yet
+                </td>
+              </tr>
+            )}
           </tbody>
 
         </table>

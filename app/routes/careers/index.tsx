@@ -11,7 +11,7 @@ import EmploymentHistory from "~/components/EmploymentHistory/EmploymentHistory"
 
 
 // Types
-import type { ApplicantDataTypes } from "~/types/ApplicantDataTypes";
+import type { ApplicantDataTypes, CountryType, YesNo, PositionType, RefferalSourceType  } from "~/types/ApplicantDataTypes";
 import type { EmployerType } from "~/types/EmployerTypes";
 
 
@@ -30,40 +30,73 @@ const CareersPage = () => {
     
     const [openModal, setOpenModal] = useState(false)
     const [applicantData, setApplicantData] = useState<ApplicantDataTypes | null>(null)
+
     const [employeeReferral, setEmployeReferral] = useState(false)
-    const [yearsOfExperience, setYearsOfExperience] = useState(0)
+    const [yearsOfExp, setYearsOfExperience] = useState(0)
+
     const [error, setError] = useState('')
     
     const [employmentHistory, setEmploymentHistory] = useState<EmployerType[]>([])
     
-    
+    const [formData, setFormData] = useState<ApplicantDataTypes>({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        city: "",
+        country: 'canada',
+        position: 'solo',
+        licenseStatus: 'yes',
+        yearsOfExperience: '',
+        diploma: 'yes',
+        tickets: 'no',
+        demeritPoints: '',
+        roadAccidents: 'no',
+        workAccidents: 'no',
+        referralSource: '',
+        referred: 'no',
+        referringEmployee: '',
+        comments: '',
+        employmentHistory: [],
+    })
 
 
 
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const formData = new FormData(e.currentTarget)
-        const rawData = Object.fromEntries(formData.entries())
-
-        const typedData = rawData as unknown as ApplicantDataTypes
-
-        setApplicantData(typedData)
+        console.log(formData)
+        setApplicantData(formData)
         setOpenModal(true)
     }
 
     const handleExperienceYears = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const exp = e.target.value
-        const expYears = parseInt(exp, 10)
-
-        setYearsOfExperience(expYears)
         
-        if(expYears < 0) {
-            setError('Your years of experience can not be lower then 0.')
-        } else {
+        const value = e.currentTarget.value;
+
+        if (value === '') {
+            setYearsOfExperience(0)
+            setFormData(prev=> ({...prev, yearsOfExperience: ''}))
             setError('')
+            return
+            
         }
- 
+        
+        const expYears = parseInt(value, 10)
+
+        if(isNaN(expYears)){
+            // ignoring non numeric input
+            return
+        }
+
+        if (expYears < 0) {
+            setError('Years of experience cannot be negatice.')
+            return
+        }
+        
+        setError('')
+        setYearsOfExperience(expYears)
+        setFormData(prev=> ({...prev, yearsOfExperience: expYears.toString()}))
     }
 
     return ( 
@@ -87,36 +120,68 @@ const CareersPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <div className="form-group">
-                    <label htmlFor="firstName">First Name*</label>
-                    <input id="firstName" type="text" className="input" name='firstName' required/>
+                        <label htmlFor="firstName">First Name*</label>
+                        <input id="firstName" type="text" className="input" name='firstName' value={formData.firstName} required onChange={(e) => setFormData(prev => ({
+                            ...prev,
+                            firstName: e.currentTarget.value
+                            }))}/>
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="lastName">Last Name*</label>
-                    <input id="lastName" type="text" className="input" name='lastName' required/>
+                        <label htmlFor="lastName">Last Name*</label>
+                        <input id="lastName" type="text" className="input" name='lastName' value={formData.lastName} required
+                         onChange={(e) => setFormData(prev=> ({
+                            ...prev,
+                            lastName: e.currentTarget.value
+                        }))}
+                        />
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="email">Email*</label>
-                    <input id="email" type="email" className="input" name='email' required/>
+                        <label htmlFor="email">Email*</label>
+                        <input id="email" type="email" className="input" name='email' required
+                            value={formData.email} onChange={(e) => setFormData(prev => ({
+                                ...prev, 
+                                email: e.currentTarget.value
+                            }))}
+                        />
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="phone">Telephone*</label>
-                    <input id="phone" type="tel" placeholder="(000) 123 - 4567" className="input" name='phone' required/>
+                        <label htmlFor="phone">Telephone*</label>
+                        <input id="phone" type="tel" placeholder="(000) 123 - 4567" className="input" name='phone' required
+                            value={formData.phone} onChange={(e) => setFormData(prev => ({
+                                ...prev, 
+                                phone: e.currentTarget.value
+                            }))}
+                        />
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="city">City*</label>
-                    <input id="city" type="text" className="input" name='city' required/>
+                        <label htmlFor="city">City*</label>
+                        <input id="city" type="text" className="input" name='city' required
+                        value={formData.city} onChange={(e) => setFormData(prev => ({
+                            ...prev, 
+                            city: e.currentTarget.value
+                        }))}
+                        />
                     </div>
 
                     <div className="form-group">
-                    <label htmlFor="country">Country*</label>
-                    <select id="country" className="input" name='country' required>
-                        <option value="canada">Canada</option>
-                        <option value="usa">USA</option>
-                    </select>
+                        <label htmlFor="country">Country*</label>
+                        <select id="country" className="input" name='country' required
+                            value={formData.country} onChange={(e) => {
+                                const value = e.currentTarget.value as CountryType
+
+                                setFormData(prev => ({
+                                    ...prev,
+                                    country: value
+                                }))
+                            }}
+                        >
+                            <option value="canada">Canada</option>
+                            <option value="usa">USA</option>
+                        </select>
                     </div>
 
                 </div>
@@ -129,12 +194,18 @@ const CareersPage = () => {
 
                     <div className="radio-group">
                     <label className="mr-5">
-                        <input type="radio" name="position" value="team"/>
+                        <input type="radio" name="position" value="team"
+                            checked ={formData.position === 'team'}
+                            onChange={(e) => setFormData(prev => ({...prev, position: e.currentTarget.value as PositionType}))}
+                        />
                         Class 1 - Team Drivers
                     </label>
 
                     <label>
-                        <input type="radio" name="position" value="solo" />
+                        <input type="radio" name="position" value="solo" 
+                            checked = {formData.position === 'solo' }
+                            onChange={(e) => setFormData(prev => ({...prev, position: e.currentTarget.value as PositionType}))}
+                        />
                         Class 1 - Solo Driver
                     </label>
                     </div>
@@ -151,11 +222,17 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="licenseStatus" value="yes" />
+                        <input type="radio" name="licenseStatus" value="yes" 
+                            checked = {formData.licenseStatus === 'yes'}
+                            onChange={(e) => setFormData(prev => ({...prev, licenseStatus: e.target.value as YesNo}))}
+                        />
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="licenseStatus" value="no" />
+                        <input type="radio" name="licenseStatus" value="no"
+                            checked = {formData.licenseStatus === 'no'}
+                            onChange = {(e) => setFormData(prev => ({...prev, licenseStatus: e.target.value as YesNo}))}
+                        />
                         No
                         </label>
                     </div>
@@ -170,10 +247,18 @@ const CareersPage = () => {
                             <div className="p-3 text-red-700">{error}</div>
                         )}
 
-                        {yearsOfExperience >= 1 && (
-                            <EmploymentHistory setEmploymentHistory={setEmploymentHistory} employmentHistory={employmentHistory}/>
-                            
-                        )}
+                        <EmploymentHistory 
+                            employmentHistory={formData.employmentHistory ?? []}
+                            setEmploymentHistory={(value) =>
+                                setFormData(prev => ({
+                                    ...prev,
+                                    employmentHistory:
+                                        typeof value === "function"
+                                            ? value(prev.employmentHistory ?? [])
+                                            : value
+                                }))
+                            }
+                        />
 
 
                     </div>
@@ -187,11 +272,17 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="diploma" value="yes" />
+                        <input type="radio" name="diploma" value="yes" 
+                            checked={formData.diploma === 'yes'}
+                            onChange={(e) => setFormData(prev => ({...prev, diploma: e.target.value as YesNo}))}
+                        />
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="diploma" value="no" />
+                        <input type="radio" name="diploma" value="no" 
+                            checked={formData.diploma === 'no'}
+                            onChange={(e) => setFormData(prev => ({...prev, diploma: e.target.value as YesNo}))}
+                        />
                         No
                         </label>
                     </div>
@@ -210,11 +301,17 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="tickets" value="yes" />
+                        <input type="radio" name="tickets" value="yes" 
+                            checked={formData.tickets === 'yes'}
+                            onChange = {(e) => setFormData(prev=>({...prev, tickets: e.target.value as YesNo}))}
+                        />
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="tickets" value="no" />
+                        <input type="radio" name="tickets" value="no" 
+                            checked = {formData.tickets === 'no'}
+                            onChange= {(e) => setFormData(prev => ({...prev, tickets: e.target.value as YesNo}))}
+                        />
                         No
                         </label>
                     </div>
@@ -224,7 +321,10 @@ const CareersPage = () => {
                     <label htmlFor="demeritPoints">
                         How many demerit points do you have?
                     </label>
-                    <input id="demeritPoints" type="number" className="input" name='demeritPoints'/>
+                    <input id="demeritPoints" type="number" className="input" name='demeritPoints'
+                        value={formData.demeritPoints}
+                        onChange={(e) => setFormData(prev => ({...prev, demeritPoints: e.target.value}))}
+                    />
                     </div>
 
                 </div>
@@ -240,11 +340,17 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="roadAccident" value="yes" />
+                        <input type="radio" name="roadAccidents" value="yes" 
+                            checked = {formData.roadAccidents === 'yes'}
+                            onChange={(e) => setFormData(prev => ({...prev, roadAccidents: e.currentTarget.value as YesNo }))}
+                        />
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="roadAccident" value="no" />
+                        <input type="radio" name="roadAccidents" value="no" 
+                            checked = {formData.roadAccidents === 'no'}
+                            onChange = {(e) => setFormData(prev => ({...prev, roadAccidents: e.currentTarget.value as YesNo }))}
+                        />
                         No
                         </label>
                     </div>
@@ -256,11 +362,16 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="workAccident" value="yes" />
+                        <input type="radio" name="workAccidents" value="yes" 
+                            checked = {formData.workAccidents === 'yes'}
+                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.currentTarget.value as YesNo}))}
+                        />
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="workAccident" value="no" />
+                        <input type="radio" name="workAccidents" value="no" 
+                            checked = {formData.workAccidents === 'no'}
+                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.currentTarget.value as YesNo}))}/>
                         No
                         </label>
                     </div>
