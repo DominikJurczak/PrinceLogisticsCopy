@@ -31,5 +31,5 @@ export type ApplicantDataTypes = {
     referringEmployee?: string;
     comments?: string;
 
-    employmentHistory? : EmployerType[];
+    employmentHistory: EmployerType[];
 }

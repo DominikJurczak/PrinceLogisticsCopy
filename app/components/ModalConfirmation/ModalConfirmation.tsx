@@ -1,10 +1,16 @@
 // HEADLESSUI MODAL WINDOW FOR CONFIRMATION
 import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
+// Redirect after submit succesfull
+import { useNavigate } from "react-router";
+
+
 // Types import for ModalConfirmation
 import type { ApplicantDataTypes } from "~/types/ApplicantDataTypes";
-import type { Dispatch, SetStateAction } from "react"
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react"
 
+// loader spinner
+import BarLoader from "react-spinners/BarLoader";
 
 export type ApplicantModalConfirmationTypes = {
     applicantData: ApplicantDataTypes | null;
@@ -15,23 +21,71 @@ export type ApplicantModalConfirmationTypes = {
 
 const ModalConfirmation = ({applicantData, isOpen, setIsOpen}:ApplicantModalConfirmationTypes) => {
 
-    if (!applicantData) return null;
+    const [status, setStatus] = useState('idle')
+    const [countdown, setCountdown] = useState(5)
+    
+    const navigate = useNavigate()
+    
+    const handleSendApplication = () => {
+        setStatus('loading')
+    }
+
+    useEffect(()=> {
+        if(status !== 'loading') return
+
+        const timer = setTimeout(()=>{
+            setStatus('success')
+        },2000)
+
+        return () => clearTimeout(timer)
+    }, [status])
+    
+    useEffect(()=> {
+        if(status !== 'success') return
+
+        const timer = setTimeout(()=>{
+            setStatus('redirecting')
+        }, 2000)
+
+        return () => clearTimeout(timer)
+    }, [status])
+
+
+    useEffect(() => {
+        if (status !== "redirecting") return
+
+        if (countdown === 0) {
+            navigate("/")
+            return
+        }
+
+        const interval = setInterval(() => {
+            setCountdown(prev => prev - 1)
+        }, 1000)
+
+        return () => clearInterval(interval)
+        }, [status, countdown])
+
+
+        if (!applicantData) return null;
 
     return ( 
-        <Dialog open={isOpen} as='div' className="relative z-10 focus:outline-none" onClose={() => setIsOpen(false)}>
+        
+    <Dialog open={isOpen} as='div' className="relative z-10 focus:outline-none " onClose={() => setIsOpen(false)}>
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
+
             <DialogPanel
               transition
-              className="w-full max-w-md max-h-[90vh] rounded-xl bg-black flex flex-col duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+              className="w-[960px] max-h-[90vh] rounded-xl bg-black flex flex-col duration-300 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
             >
                 <div className="p-6 border-b border-gray-800">
                     <DialogTitle className="text-base font-medium text-white">
-                    Your application:
+                        Application for: {applicantData.firstName + ' ' + applicantData.lastName }
                     </DialogTitle>
                 </div>
             <div className="flex-1 overflow-y-auto p-6">
-                <div className="mt-6 space-y-6 text-sm text-gray-200">
+                <div className=" space-y-6 text-sm text-gray-200">
 
                     {/* BASIC INFO */}
                     <div className="space-y-2">
@@ -79,15 +133,44 @@ const ModalConfirmation = ({applicantData, isOpen, setIsOpen}:ApplicantModalConf
                         </h4>
 
                         <div className="grid grid-cols-2 gap-y-2">
-                        <span className="text-gray-400">License Suspended:</span>
-                        <span className="capitalize">{applicantData.licenseStatus}</span>
+                            <span className="text-gray-400">License Suspended:</span>
+                            <span className="capitalize">{applicantData.licenseStatus || "-"}</span>
 
-                        <span className="text-gray-400">Years of Experience:</span>
-                        <span>{applicantData.yearsOfExperience}</span>
+                            <span className="text-gray-400">Years of Experience:</span>
+                            <span>{applicantData.yearsOfExperience}</span>
 
-                        <span className="text-gray-400">DEP Diploma:</span>
-                        <span className="capitalize">{applicantData.diploma}</span>
+                            <span className="text-gray-400">DEP Diploma:</span>
+                            <span className="capitalize">{applicantData.diploma}</span>
                         </div>
+
+                        {applicantData.employmentHistory?.length >= 1 &&(
+                                <table className="w-full border-collapse mt-6 text-sm">
+                                <thead>
+                                <tr className="bg-gray-100 text-left uppercase text-xs tracking-wide text-gray-600">
+                                <th className="px-4 py-3 font-semibold">Employer</th>
+                                <th className="px-4 py-3 font-semibold">From</th>
+                                <th className="px-4 py-3 font-semibold">To</th>
+                                </tr>
+                                </thead>
+                                
+                                <tbody className="divide-y divide-gray-200">
+                                {applicantData.employmentHistory?.map((lastEmployment, index) => (
+                                <tr key={index} className="hover:bg-gray-50 transition">
+                                    <td className="px-4 py-3 font-medium bg-white text-gray-800">
+                                    {lastEmployment.employer}
+                                    </td>
+                                    <td className="px-4 py-3 bg-white text-gray-600">
+                                    {lastEmployment.from}
+                                    </td>
+                                    <td className="px-4 py-3 bg-white text-gray-600">
+                                    {lastEmployment.to}
+                                    </td>
+                                </tr>
+                                ))}
+                                </tbody>
+                                </table>
+                            )}
+                            
                     </div>
 
                     {/* DRIVING RECORD */}
@@ -101,13 +184,13 @@ const ModalConfirmation = ({applicantData, isOpen, setIsOpen}:ApplicantModalConf
                         <span className="capitalize">{applicantData.tickets}</span>
 
                         <span className="text-gray-400">Demerit Points:</span>
-                        <span>{applicantData.demeritPoints}</span>
+                        <span>{applicantData.demeritPoints || '-'}</span>
 
                         <span className="text-gray-400">Road Accident:</span>
-                        <span className="capitalize">{applicantData.roadAccident}</span>
+                        <span className="capitalize">{applicantData.roadAccidents || '-'}</span>
 
                         <span className="text-gray-400">Work Accident:</span>
-                        <span className="capitalize">{applicantData.workAccident}</span>
+                        <span className="capitalize">{applicantData.workAccidents || '-'}</span>
                         </div>
                     </div>
 
@@ -146,18 +229,50 @@ const ModalConfirmation = ({applicantData, isOpen, setIsOpen}:ApplicantModalConf
 
               {/* Confirm and send application */}
               <div className="p-4 border-t border-gray-800 bg-black">
-                    <Button
-                    className="w-full rounded-md bg-red-600 py-2 font-semibold text-white hover:bg-red-700 transition"
-                    onClick={() => setIsOpen(false)}
-                    >
-                    Send application
-                    </Button>
+                  
+
+                    {status === 'idle' ? (
+                        
+                        <div className="grid grid-cols-2 gap-6">
+                            <Button
+                                className="rounded-md bg-red-600 py-2 font-semibold text-white hover:bg-red-700 transition"
+                                onClick={() => setIsOpen(false)}
+                                >
+                                Edit application
+                            </Button>
+                                
+                            <Button
+                                className="rounded-md bg-green-600 py-2 font-semibold text-white hover:bg-green-700 transition"
+                                onClick={handleSendApplication}
+                                >
+
+                                Send Application
+                            </Button>
+                            </div>
+                        
+                    ) : (
+                        <>
+                        {status === "loading" && <BarLoader width="100%" color="#ffffff" />}
+
+                            {status === "success" && (
+                            <p className="font-bold text-lg text-green-600 text-center">Your application was sent successfully!</p>
+                            )}
+
+                            {status === "redirecting" && (
+                            <p className="font-bold text-lg text-white text-center">You will be redirected in {countdown}s</p>
+                            )}
+                        </>
+
+                    )}
+                    
+                    
                 </div>
             </DialogPanel>
           </div>
         </div>
 
     </Dialog>
+        
      );
 }
  

@@ -23,20 +23,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 
-
-
-
 const CareersPage = () => {
     
     const [openModal, setOpenModal] = useState(false)
     const [applicantData, setApplicantData] = useState<ApplicantDataTypes | null>(null)
 
-    const [employeeReferral, setEmployeReferral] = useState(false)
-    const [yearsOfExp, setYearsOfExperience] = useState(0)
 
     const [error, setError] = useState('')
     
-    const [employmentHistory, setEmploymentHistory] = useState<EmployerType[]>([])
     
     const [formData, setFormData] = useState<ApplicantDataTypes>({
         firstName: "",
@@ -62,10 +56,9 @@ const CareersPage = () => {
 
 
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log(formData)
         setApplicantData(formData)
         setOpenModal(true)
     }
@@ -75,9 +68,11 @@ const CareersPage = () => {
         const value = e.currentTarget.value;
 
         if (value === '') {
-            setYearsOfExperience(0)
-            setFormData(prev=> ({...prev, yearsOfExperience: ''}))
-            setError('')
+            setFormData(prev => ({
+                ...prev,
+                yearsOfExperience: ''
+            }))
+            setError("")
             return
             
         }
@@ -94,8 +89,8 @@ const CareersPage = () => {
             return
         }
         
+        
         setError('')
-        setYearsOfExperience(expYears)
         setFormData(prev=> ({...prev, yearsOfExperience: expYears.toString()}))
     }
 
@@ -123,7 +118,7 @@ const CareersPage = () => {
                         <label htmlFor="firstName">First Name*</label>
                         <input id="firstName" type="text" className="input" name='firstName' value={formData.firstName} required onChange={(e) => setFormData(prev => ({
                             ...prev,
-                            firstName: e.currentTarget.value
+                            firstName: e.target.value
                             }))}/>
                     </div>
 
@@ -132,7 +127,7 @@ const CareersPage = () => {
                         <input id="lastName" type="text" className="input" name='lastName' value={formData.lastName} required
                          onChange={(e) => setFormData(prev=> ({
                             ...prev,
-                            lastName: e.currentTarget.value
+                            lastName: e.target.value
                         }))}
                         />
                     </div>
@@ -142,7 +137,7 @@ const CareersPage = () => {
                         <input id="email" type="email" className="input" name='email' required
                             value={formData.email} onChange={(e) => setFormData(prev => ({
                                 ...prev, 
-                                email: e.currentTarget.value
+                                email: e.target.value
                             }))}
                         />
                     </div>
@@ -152,7 +147,7 @@ const CareersPage = () => {
                         <input id="phone" type="tel" placeholder="(000) 123 - 4567" className="input" name='phone' required
                             value={formData.phone} onChange={(e) => setFormData(prev => ({
                                 ...prev, 
-                                phone: e.currentTarget.value
+                                phone: e.target.value
                             }))}
                         />
                     </div>
@@ -162,7 +157,7 @@ const CareersPage = () => {
                         <input id="city" type="text" className="input" name='city' required
                         value={formData.city} onChange={(e) => setFormData(prev => ({
                             ...prev, 
-                            city: e.currentTarget.value
+                            city: e.target.value
                         }))}
                         />
                     </div>
@@ -171,7 +166,7 @@ const CareersPage = () => {
                         <label htmlFor="country">Country*</label>
                         <select id="country" className="input" name='country' required
                             value={formData.country} onChange={(e) => {
-                                const value = e.currentTarget.value as CountryType
+                                const value = e.target.value as CountryType
 
                                 setFormData(prev => ({
                                     ...prev,
@@ -196,7 +191,7 @@ const CareersPage = () => {
                     <label className="mr-5">
                         <input type="radio" name="position" value="team"
                             checked ={formData.position === 'team'}
-                            onChange={(e) => setFormData(prev => ({...prev, position: e.currentTarget.value as PositionType}))}
+                            onChange={(e) => setFormData(prev => ({...prev, position: e.target.value as PositionType}))}
                         />
                         Class 1 - Team Drivers
                     </label>
@@ -204,7 +199,7 @@ const CareersPage = () => {
                     <label>
                         <input type="radio" name="position" value="solo" 
                             checked = {formData.position === 'solo' }
-                            onChange={(e) => setFormData(prev => ({...prev, position: e.currentTarget.value as PositionType}))}
+                            onChange={(e) => setFormData(prev => ({...prev, position: e.target.value as PositionType}))}
                         />
                         Class 1 - Solo Driver
                     </label>
@@ -242,23 +237,28 @@ const CareersPage = () => {
                         <label htmlFor="experience">
                             How many years of experience do you have with a Class 1 (EC) license?
                         </label>
-                        <input id="experience" type="number" className="input" name='yearsOfExperience' min='0' onChange={handleExperienceYears}/>
+                        <input id="experience" type="number" className="input" name='yearsOfExperience' min='0' 
+                            value={formData.yearsOfExperience}
+                            onChange={handleExperienceYears}/>
                         {error && (
                             <div className="p-3 text-red-700">{error}</div>
                         )}
 
-                        <EmploymentHistory 
+                        {Number(formData.yearsOfExperience) >= 1 && (
+
+                            <EmploymentHistory 
                             employmentHistory={formData.employmentHistory ?? []}
                             setEmploymentHistory={(value) =>
                                 setFormData(prev => ({
                                     ...prev,
                                     employmentHistory:
-                                        typeof value === "function"
-                                            ? value(prev.employmentHistory ?? [])
-                                            : value
+                                    typeof value === "function"
+                                    ? value(prev.employmentHistory ?? [])
+                                    : value
                                 }))
                             }
-                        />
+                            />
+                        )}
 
 
                     </div>
@@ -342,14 +342,14 @@ const CareersPage = () => {
                         <label>
                         <input type="radio" name="roadAccidents" value="yes" 
                             checked = {formData.roadAccidents === 'yes'}
-                            onChange={(e) => setFormData(prev => ({...prev, roadAccidents: e.currentTarget.value as YesNo }))}
+                            onChange={(e) => setFormData(prev => ({...prev, roadAccidents: e.target.value as YesNo }))}
                         />
                         Yes
                         </label>
                         <label>
                         <input type="radio" name="roadAccidents" value="no" 
                             checked = {formData.roadAccidents === 'no'}
-                            onChange = {(e) => setFormData(prev => ({...prev, roadAccidents: e.currentTarget.value as YesNo }))}
+                            onChange = {(e) => setFormData(prev => ({...prev, roadAccidents: e.target.value as YesNo }))}
                         />
                         No
                         </label>
@@ -364,14 +364,14 @@ const CareersPage = () => {
                         <label>
                         <input type="radio" name="workAccidents" value="yes" 
                             checked = {formData.workAccidents === 'yes'}
-                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.currentTarget.value as YesNo}))}
+                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.target.value as YesNo}))}
                         />
                         Yes
                         </label>
                         <label>
                         <input type="radio" name="workAccidents" value="no" 
                             checked = {formData.workAccidents === 'no'}
-                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.currentTarget.value as YesNo}))}/>
+                            onChange={(e) => setFormData(prev => ({...prev, workAccidents: e.target.value as YesNo}))}/>
                         No
                         </label>
                     </div>
@@ -392,7 +392,18 @@ const CareersPage = () => {
                     <label htmlFor="referralSource">
                         How did you hear about Prince Logistic Services?
                     </label>
-                    <select id="referralSource" className="input" name='referralSource'>
+                    <select
+                        id="referralSource"
+                        className="input"
+                        name="referralSource"
+                        value={formData.referralSource}
+                        onChange={(e) =>
+                            setFormData(prev => ({
+                            ...prev,
+                            referralSource: e.target.value as RefferalSourceType
+                            }))
+                        }
+                        >
                         <option value="">Please choose</option>
                         <option value="employee">Employee</option>
                         <option value="facebook">Facebook</option>
@@ -408,29 +419,47 @@ const CareersPage = () => {
                     </label>
                     <div className="radio-inline">
                         <label>
-                        <input type="radio" name="referred" value="yes" onChange={() => setEmployeReferral(true)}/>
+                        <input type="radio" name="referred" value="yes" 
+                            checked = {formData.referred === 'yes'}
+                            onChange={(e) => setFormData(prev => ({
+                                ...prev, referred: e.target.value as YesNo
+                            }))}/>
                         Yes
                         </label>
                         <label>
-                        <input type="radio" name="referred" value="no" onChange={()=> setEmployeReferral(false)}/>
+                        <input type="radio" name="referred" value="no" 
+                            checked = {formData.referred === 'no'}
+                            onChange={(e) => setFormData(prev => ({
+                                ...prev, referred: e.target.value as YesNo
+                            }))}/>
                         No
                         </label>
                     </div>
                     </div>
 
-                    {employeeReferral && (
+                    {formData.referred === 'yes' && (
 
                         <div className="form-group max-w-sm transition">
                         <label htmlFor="referringEmployee">
                             Can you provide his/her name for Us?
                         </label>
-                        <input id="referringEmployee" type="text" className="input" name='referringEmployee'/>
+                        <input id="referringEmployee" type="text" className="input" name='referringEmployee'
+                            value={formData.referringEmployee}
+                            onChange={(e) => setFormData(prev=>({
+                                ...prev, referringEmployee: e.target.value
+                            }))}
+                        />
                         </div>
                     )}
 
                     <div className="form-group">
                     <label htmlFor="comments">Comments</label>
-                    <textarea id="comments" rows={4} className="input" name='comments'/>
+                    <textarea id="comments" rows={4} className="input" name='comments'
+                        value={formData.comments}
+                        onChange={(e) => setFormData(prev =>({
+                            ...prev, comments: e.target.value
+                        }))}
+                    />
                     </div>
 
                 </div>
