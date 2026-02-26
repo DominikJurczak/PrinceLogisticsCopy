@@ -1,5 +1,37 @@
-import PageContent from "~/components/PageContent/PageContent";
+import { useFormik } from 'formik'
+
 import type { Route } from "./+types/index";
+
+import type { FormikErrors } from 'formik';
+import type { ContactTypes } from '~/types/ContactTypes';
+
+import PageContent from "~/components/PageContent/PageContent";
+import Baner from "~/components/Baner/baner";
+
+const validate = (values: ContactTypes) => {
+    const errors : FormikErrors<ContactTypes> = {};
+
+    if (!values.name) {
+        errors.name = 'This field is required.'
+    } else if (values.name.length < 2) {
+        errors.name = 'Must be longer than 1 character';
+    }
+    if (!values.email) {
+        errors.email = 'This field is required.'
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+     errors.email = 'Invalid email address';
+   }
+
+   if (!values.message) {
+        errors.message = 'This field is required'
+   } else if (values.message.length > 300) {
+    errors.message = 'Your message should be less than 300 characters. '
+   }
+
+    return errors;
+};
+
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Contact Us - Prince Logistics Services" },
@@ -7,9 +39,29 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-import Baner from "~/components/Baner/baner";
 
 const ContactPage = () => {
+    
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            company: '',
+            city: '',
+            email: '',
+            phone: '',
+            message: '',
+            
+        },
+        validate,
+        validateOnChange: false,
+        onSubmit: values => {
+            alert(JSON.stringify(values, null,2))
+        },
+    })
+    
+
+    
+    
     return ( 
     <div className="w-full">
         <Baner 
@@ -19,6 +71,7 @@ const ContactPage = () => {
         />
         <div className="max-w-[960px] mx-auto mt-10">
 
+        
             <PageContent
                 title='CONTACT US'
             >
@@ -35,54 +88,97 @@ const ContactPage = () => {
 
                 <strong>Fax: (514) 367-0999</strong>
 
-
-                <form className="mt-10 space-y-6">
+                <form onSubmit={formik.handleSubmit} className="mt-10 space-y-6">
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="flex flex-col">
+
                         <input
-                        type="text"
-                        placeholder="NAME (required)"
-                        required
-                        className="contact-input"
+                            type="text"
+                            placeholder="NAME (required)"
+                            id='name'
+                            name='name'
+                            className='contact-input'
+                            value={formik.values.name}
+                            onChange={formik.handleChange}
                         />
+                        {formik.errors.name && (
+                            <span className="text-red-600 text-xs mt-1">
+                            {formik.errors.name}
+                            </span>
+                        )}
+                        </div>
 
                         <input
                         type="text"
                         placeholder="COMPANY"
                         className="contact-input"
+                        id='company'
+                        name='company'
+                        value={formik.values.company}
+                        onChange={formik.handleChange}
                         />
 
                         <input
                         type="text"
                         placeholder="CITY"
                         className="contact-input"
+                        id='city'
+                        name='city'
+                        value={formik.values.city}
+                        onChange={formik.handleChange}
                         />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col">
+
                         <input
-                        type="email"
-                        placeholder="EMAIL (required)"
-                        required
-                        className="contact-input"
+                            type="email"
+                            placeholder="EMAIL (required)"
+                            className='contact-input'
+                            id='email'
+                            name='email'
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
                         />
+                        {formik.errors.email  && 
+                            (
+                            <span className="text-red-500 text-xs mt-1 block tracking-wide">
+                                {formik.errors.email}
+                            </span>
+                            )}
+                        </div>
 
                         <input
                         type="tel"
                         placeholder="PHONE"
                         className="contact-input"
+                        id='phone'
+                        name='phone'
+                        value={formik.values.phone}
+                        onChange={formik.handleChange}
                         />
                     </div>
 
-                   
+                   <div className="flex-flex-col">
+
                     <textarea
                         name="message"
-                        id="contactMessage"
+                        id="message"
                         placeholder="MESSAGE (required)"
-                        required
                         rows={8}
-                        className="contact-input resize-none"
-                    />
+                        className='contact-input resize-none'
+                        value={formik.values.message}
+                        onChange={formik.handleChange}
+                        />
+                        {formik.errors.message  && 
+                        (
+                            <span className="text-red-500 text-xs mt-1 block tracking-wide">
+                                {formik.errors.message}
+                            </span>
+                        )}
+                    </div>
 
                     <div className="flex justify-center pt-6 mb-6">
                         <button
@@ -94,6 +190,7 @@ const ContactPage = () => {
                     </div>
 
                 </form>
+           
 
             </PageContent>
         </div>
