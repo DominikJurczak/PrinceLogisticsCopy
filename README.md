@@ -1,6 +1,8 @@
+# THIS WEBSITE IS NOT MOBILE FRIENDLY (WORKS GOOD ONLY ON DESKTOP | MOBILE VERSION STILL NEED SOME IMPROVEMENT)
+
 # 🚛 Prince Logistics — React + TypeScript Remake
 
-This is my personal rebuild of the *Prince Logistics* website.
+This is my personal rebuild of the _Prince Logistics_ website.
 
 The original site was more static. I decided to remake it using **React + TypeScript** to turn it into a more dynamic, component-based project and to practice real-world frontend structure.
 
@@ -21,13 +23,13 @@ Take an existing layout and rebuild it properly in React.
 
 ## ⚙️ Tech Stack
 
-- React  
-- TypeScript  
-- Formik (form handling & validation)  
-- Headless UI (modal window)  
-- react-spinners (loading state)  
-- Tailwind CSS  
-- Vite  
+- React
+- TypeScript
+- Formik (form handling & validation)
+- Headless UI (modal window)
+- react-spinners (loading state)
+- Tailwind CSS
+- Vite
 
 ---
 
