@@ -3,13 +3,14 @@ export type BanerTypes = {
     alt: string;
     banerText?: string;
     width?: string;
+    imgStyle?: React.CSSProperties
 }
 
-const Baner = ({image, alt, banerText, width='60%'}:BanerTypes) => {
+const Baner = ({image, alt, banerText, width='60%', imgStyle}:BanerTypes) => {
     return ( 
         <div className="group relative block w-full h-[252px] overflow-hidden">
             <div className="absolute inset-0">
-                <img src={image} alt={alt} className='w-full h-[253px] object-cover' />
+                <img src={image} alt={alt} className='w-full h-[253px] object-cover' style={imgStyle}/>
             </div>
 
             <div className="absolute inset-0 bg-black/10 group-hover:bg:black/60 transition duration-500"></div>

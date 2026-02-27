@@ -27,7 +27,6 @@ const CareerForm = ({formik}: CareerFormProps) => {
 
                 <div className="separator" />
 
-                
                 <LicenseInfoSection formik={formik} />
 
                 <div className="separator" />
@@ -43,7 +42,6 @@ const CareerForm = ({formik}: CareerFormProps) => {
                 <ReferralInfoSection formik={formik} />
 
                 
-
             <button
                     type="submit"
                     className="bg-[#e62a26] text-white px-8 py-3 font-semibold uppercase tracking-wide hover:bg-red-700 transition"> 

@@ -62,6 +62,10 @@ const Header = () => {
             Services
           </NavLink>
 
+          <NavLink className={({isActive}) => isActive ? active : base }  to="/fleet">
+            FLEET
+          </NavLink>
+
           <NavLink className={({isActive}) => isActive ? active : base }  to="/partners">
             Partners
           </NavLink>
@@ -71,12 +75,14 @@ const Header = () => {
           </NavLink>
 
           <NavLink className={({isActive}) => isActive ? active : base }  to="/contact">
-            Contact Us
+            Contact
           </NavLink>
 
           <NavLink className={({isActive}) => isActive ? active : base }  to="/documents">
             Documents
           </NavLink>
+
+          
 
           <NavLink
             className="ml-auto font-bold text-white px-8 py-3 hover:bg-red-700 transition"

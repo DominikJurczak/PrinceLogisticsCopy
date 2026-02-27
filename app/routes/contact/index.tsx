@@ -101,6 +101,7 @@ const ContactPage = () => {
                             className='contact-input'
                             value={formik.values.name}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
                         {formik.errors.name && (
                             <span className="text-red-600 text-xs mt-1">
@@ -117,6 +118,7 @@ const ContactPage = () => {
                         name='company'
                         value={formik.values.company}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
 
                         <input
@@ -127,6 +129,7 @@ const ContactPage = () => {
                         name='city'
                         value={formik.values.city}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
                     </div>
 
@@ -141,6 +144,7 @@ const ContactPage = () => {
                             name='email'
                             value={formik.values.email}
                             onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
                         {formik.errors.email  && 
                             (
@@ -158,6 +162,7 @@ const ContactPage = () => {
                         name='phone'
                         value={formik.values.phone}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
                     </div>
 
@@ -171,6 +176,7 @@ const ContactPage = () => {
                         className='contact-input resize-none'
                         value={formik.values.message}
                         onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         />
                         {formik.errors.message  && 
                         (
