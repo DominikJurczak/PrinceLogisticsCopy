@@ -50,16 +50,6 @@ This part helped me understand how to manage bigger forms and structure logic in
 
 ---
 
-## 🚀 What I want to add next
-
-- Fleet section (trucks + trailers with specs and photos)
-- Quote page rebuilt with Formik validation
-- Backend integration instead of mock submit
-- File upload support (CV, documents)
-- Small refactors into custom hooks
-
----
-
 ## 🎯 Why I’m doing this
 
 I’m learning React by rebuilding real-world websites.
